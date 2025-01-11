@@ -12,33 +12,8 @@ async function setBodyHtml() {
   document.body.innerHTML = html
 }
 
-/**
- * Get the HOML source either from a purported .homl file that matches this
- * .html file or else from the <body> element.
- * @returns {Promise<string>}
- */
+/** @returns {Promise<string>} */
 async function getHomlSrc() {
-  const url = window.location.href
-  const isFile = url.startsWith(`file://`)
-  const isHtml = url.endsWith(`.html`)
-
-  // If this is something like https://example.com/index.html then try to search
-  // for an index.homl file on the same server to load in.
-  if (isHtml && !isFile) {
-    const homlUrl = url.replace(/\.html$/, `.homl`)
-    if (url !== homlUrl) {
-      try {
-        const fetchRes = await fetch(homlUrl)
-        const homl = await fetchRes.text()
-        if (homl) {
-          return homl
-        }
-      } catch(err) {
-        $(`getHomlSrc> Tried and failed to fetch a %o source file.`, homlUrl)
-      }
-    }
-  }
-
   const body = document.body.textContent || ``
   $(`getHomlSrc> BodyContent=%o`, body)
 
@@ -84,6 +59,7 @@ function arity(args, arity) {
 
   return args
 }
+
 // END src/program.js
 // BEGIN src/content-ops.js
 /**
