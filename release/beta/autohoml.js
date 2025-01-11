@@ -3,11 +3,12 @@ const $ = console.log.bind(console)
 
 /** @typedef {(args: string[]) => string} Operation */
 
-/** @type {Record<string, Operation>} */
-const ops = {}
-
 // @ts-ignore
-window.ops = ops
+window.ops = window.ops || {}
+
+/** @type {Record<string, Operation>} */
+// @ts-ignore
+const { ops } = window
 
 async function setBodyHtml() {
   const homl = await getHomlSrc()
