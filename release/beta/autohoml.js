@@ -6,6 +6,9 @@ const $ = console.log.bind(console)
 /** @type {Record<string, Operation>} */
 const ops = {}
 
+// @ts-ignore
+window.ops = ops
+
 async function setBodyHtml() {
   const homl = await getHomlSrc()
   const html = convertHomlToHtml(homl)
