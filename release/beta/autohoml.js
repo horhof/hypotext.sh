@@ -18,7 +18,7 @@ var getBackslashSuffixRegex = function(sigil) {
   return new RegExp(`\\b(\\S+?)\\\\${sigil}\\b`);
 };
 
-class Document {
+class Doc {
   ops = {};
   inlines = {};
   blocks = [];
@@ -27,7 +27,7 @@ class Document {
   }
   homl = ``;
   constructor() {
-    this.ops = defaultOps;
+    this.ops = ops;
     this.inlines = defaultInlines;
   }
   setHoml(homl) {
@@ -107,23 +107,23 @@ class Block {
     return `<${this.tag}>\n${this.lines.join(`\n`)}\n</${this.tag}>\n`;
   }
 }
-var defaultOps = {};
-defaultOps.h = (doc, args) => {
+var ops = {};
+ops.h = (doc, args) => {
   const [depth, text] = arity(args, 2);
   const div = doc.addBlock(`div`);
   div.addLine(`<h${depth}>${text}</h${depth}>`);
 };
-defaultOps.p = (doc, args) => {
+ops.p = (doc, args) => {
   const [text] = arity(args, 1);
   const p = doc.addBlock(`p`);
   p.addLine(text + `\n`);
 };
-defaultOps.bq = (doc, args) => {
+ops.bq = (doc, args) => {
   const [text] = arity(args, 1);
   const bq = doc.addBlock(`blockquote`);
   bq.addLine(text + `\n`);
 };
-defaultOps.li = (doc, args) => {
+ops.li = (doc, args) => {
   const [text] = arity(args, 1);
   let block = doc.currentBlock;
   if (block.tag !== `ul`) {
@@ -131,7 +131,7 @@ defaultOps.li = (doc, args) => {
   }
   block.addLine(`<li>${text}</li>`);
 };
-defaultOps.num = (doc, args) => {
+ops.num = (doc, args) => {
   const [text] = arity(args, 1);
   let block = doc.currentBlock;
   if (block.tag !== `ol`) {
@@ -142,6 +142,7 @@ defaultOps.num = (doc, args) => {
 var defaultInlines = {};
 defaultInlines.e = (text) => `<em>${text}</em>`;
 defaultInlines.s = (text) => `<strong>${text}</strong>`;
+defaultInlines.f = (text) => `<i class="foreign-language">${text}</i>`;
 
 // src/program.ts
 async function setBodyHtml(doc) {
@@ -157,18 +158,5 @@ async function getHomlSrc() {
 }
 
 // src/main.ts
-var doc;
-console.log(`main> Loading doc...`);
-if (window["homldoc"]) {
-  console.log(`main> Using custom homl doc.`);
-  doc = window["homldoc"];
-} else {
-  doc = new Document;
-}
-console.log(`main> Doc=%o`, doc);
-if (window["homlops"]) {
-  console.log(`main> Using custom homl ops.`);
-  doc.ops = window["homlops"];
-}
-console.log(`main> Ops=%o`, doc.ops);
+var doc = new Doc;
 setBodyHtml(doc);
